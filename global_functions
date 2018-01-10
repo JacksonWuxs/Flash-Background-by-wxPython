@@ -1,0 +1,6 @@
+def CpuInfo(type=0): #Get the CPU type.
+    c=wmi.WMI()
+    cpu=c.Win32_Processor()
+    print 'Cores Number: %d \n    CPU Name: %s \n    MaxSpeed: %.2f'%(cpu[0].NumberOfCores,cpu[0].Name,cpu[0].MaxClockSpeed/1000.0)
+    cpu=(cpu[0].NumberOfCores,cpu[0].Name,cpu[0].MaxClockSpeed/1000.0)
+    return cpu
