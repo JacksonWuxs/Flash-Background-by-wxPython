@@ -1,0 +1,81 @@
+import global_variables as gb_v
+import wx
+class Desktop(wx.Frame):
+    def __init__(self,parent):
+        
+        wx.Frame.__init__(self,parent,title='Excample on Flashing Background'.encode('cp936'),size=(960,580))
+        
+        #Inittialization Background
+        sbt=gb_v.SetBackgroundType() 
+        self.IsFlash=sbt.IsFlash()
+        if self.IsFlash: ##Setting flashing background
+            self.timers=0
+            self.FT=sbt.FlashTime()                                 #Flashing period
+            self.background=0                                       #The number of background
+            self.bgdirs=1                                           #The picture number of background
+            self.bgdirsmax=len(os.listdir('Source\\Background'))    #How many backgrounds you have 
+            self.bgpath=sbt.BackGroundPath()                        #The first background Path
+            self.MP=sbt.MovePages()                                 #How many pictures you would move on one flashing period
+            self.WP=sbt.WaitPeriod()                                #The waiting time on every background
+            self.BB=sbt.BestBackground()                            #The clearst picture's number of each background
+            self.WPs=self.WP
+         else:           ##Setting frozen background
+            self.bgpath=sbt.BackGroundPath()                        #Path of frozen background
+            self.FT=0.5                                             #Normally time for setting
+        
+        #Drawing background panel
+        self.panel=wx.Panel(self)
+        self.panel.Bind(wx.EVT_ERASE_BACKGROUND,self.OnEraseBack)
+        
+        #Setting Timer
+        self.timer=wx.Timer(self)
+        self.Bind(wx.EVT_TIMER,self.OnTimerEvent,self.timer)
+        self.timer.Start(self.FT*1000) #Flashing period
+        self.i=0          #Timer
+        self.Show()
+        
+    def FlashBackground(self):#Flash our Background
+        if self.timers==0:#Is that the waiting time?
+            self.bgpath='Source\\Background\\background'+str(self.bgdirs)+'\\幻灯片'+str(self.background)+'.jpg'
+            self.background+=self.MP
+            self.panel.Refresh()
+            #Make sure is that the most clear picture?
+            if self.background==self.BB:
+                self.timers=self.i
+                gc.collect()
+            #Check if it is the time to move to another picture?
+            elif self.background>=19:
+                self.background=0
+                gc.collect()
+                #Check if it is the last background of sources?
+                if self.bgdirs==self.bgdirsmax-1:
+                    self.bgdirs=1   
+                    
+                    #Check it how long doesn't move on this application.
+                    #If it's a really long time, we will take the waiting time on every background longer.
+                    if self.i>5*60/self.FT:
+                        self.WP=self.WP*5
+                else:
+                    self.bgdirs+=1
+        elif self.background==self.BB and self.i-self.timers>=self.WP:#That is the clearest picture on this background and waiting.
+            self.timers=0
+            self.background+=self.MP
+   
+    def OnTimerEvent(self,event):
+        #Does the client start a new threading?
+        #If so, stop flashing background for performance.
+        if self.IsFlash and gb_v.desktop_buttons==0:
+            self.FlashBackground()
+        elif self.IsFlash and self.background!=self.BB:
+            self.FlashBackground()
+        self.i+=1
+        
+     def OnEraseBack(self,event):#Drawing the background
+        self.dc = event.GetDC()
+        bmp = wx.Bitmap(self.bgpath)
+        self.dc.DrawBitmap(bmp, 0, 0)
+ if __name__=='__main__':
+     app=wx.App(None)
+     desktop=Desktop(None)
+     app.MainLoop()
+     app.Destory()
