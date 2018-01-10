@@ -1,0 +1,58 @@
+import global_functions as gb_f:
+class SetBackgroundType():
+    def __init__(self,t=None):
+        if t==None:
+            cpu=gb_f.CpuInfo()
+            if 'Intel' in cpu[1]:
+                if 'i7' in cpu[1] or 'i5' in cpu[1] or 'E3' in cpu[1] or 'E5' in cpu[1] or 'i9' in cpu[1]:
+                    self.t=2
+                elif 'i3' in cpu[1]:
+                    self.t=1
+                else:
+                    self.t=0
+            else:
+                if 'R7' in cpu[1] or 'R5' in cpu[1]:
+                    self.t=2
+                elif 'R3' in cpu[1]:
+                    self.t=1
+                else:
+                    self.t=0
+        else:
+            self.t=t
+    def IsFlash(self):
+        return True if self.t!=0 else False
+    def BackGroundPath(self):
+        if self.t==0:
+            return 'Source/Background/background0/幻灯片0.jpg'
+        elif self.t==1:
+            return 'Source/Background/background1/幻灯片0.jpg'
+        else:
+            return 'Source/Background/background1/幻灯片0.jpg'
+    def MovePages(self):
+        if self.t==0:
+            return False
+        elif self.t==1:
+            return 2
+        else:
+            return 1
+    def FlashTime(self):
+        if self.t==0:
+            return False
+        elif self.t==1:
+            return 0.15
+        else:
+            return 0.0833
+    def WaitPeriod(self):
+        if self.t==0:
+            return False
+        elif self.t==1:
+            return 5/0.15
+        else:
+            return 3/0.0833
+    def BestBackground(self):
+        if self.t==0:
+            return False
+        elif self.t==1:
+            return 12
+        else:
+            return 11
