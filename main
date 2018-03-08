@@ -1,5 +1,7 @@
+
 import global_variables as gb_v
 import wx
+
 class Desktop(wx.Frame):
     def __init__(self,parent):
         
@@ -74,6 +76,8 @@ class Desktop(wx.Frame):
         self.dc = event.GetDC()
         bmp = wx.Bitmap(self.bgpath)
         self.dc.DrawBitmap(bmp, 0, 0)
+        
+        
  if __name__=='__main__':
      app=wx.App(None)
      desktop=Desktop(None)
